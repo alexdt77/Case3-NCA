@@ -1,0 +1,18 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:PutItem"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:eu-central-1:760981412376:table/employees",
+        "arn:aws:dynamodb:eu-central-1:760981412376:table/employees/index/email-index"
+      ]
+    }
+  ]
+}

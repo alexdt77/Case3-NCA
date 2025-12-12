@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1 class="page-title">Device Compliance</h1>
+<p class="page-subtitle">Markeer een device als compliant op basis van Employee ID.</p>
+
+<div class="card">
+    <form method="post" class="validate">
+
+        <div class="form-row">
+            <label>Employee ID</label>
+            <input name="employee_id" placeholder="UUID van medewerker" data-required="true">
+            <div class="error-text"></div>
+        </div>
+
+        <button type="submit">Markeer compliant</button>
+    </form>
+
+    {% if error %}
+        <div class="alert danger mt-12">{{ error }}</div>
+    {% endif %}
+
+    {% if success %}
+        <div class="alert success mt-12">Device is succesvol als compliant gemarkeerd.</div>
+    {% endif %}
+</div>
+
+{% endblock %}

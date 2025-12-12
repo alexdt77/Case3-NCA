@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1 class="page-title">App A – Notepad</h1>
+<p class="page-subtitle">Persoonlijk notitieblok, opgeslagen in DynamoDB onder jouw employee-record.</p>
+
+<div class="card">
+    <form method="post" class="validate">
+
+        <div class="form-row">
+            <label>Notities</label>
+            <textarea name="notes" rows="10" placeholder="Schrijf hier je notities...">{{ notes }}</textarea>
+            <div class="error-text"></div>
+        </div>
+
+        <button type="submit">Opslaan</button>
+    </form>
+
+    {% if saved %}
+        <div class="alert success mt-12">Notities opgeslagen.</div>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1 class="page-title">App C – Admin Panel</h1>
+<p class="page-subtitle">Account- en device-acties uitvoeren voor medewerkers.</p>
+
+<div class="card">
+    <h2>Account &amp; Device Acties</h2>
+
+    {% if error %}
+        <div class="alert danger mt-12">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" class="validate">
+
+        <div class="form-row">
+            <label>Employee ID</label>
+            <input name="employee_id" placeholder="UUID van medewerker" data-required="true">
+            <div class="error-text"></div>
+        </div>
+
+        <div class="form-row">
+            <label>Actie</label>
+            <select name="action" data-required="true">
+                <option value="enable_login">Login Aan</option>
+                <option value="disable_login">Login Uit</option>
+                <option value="block_device">Device Blokkeren</option>
+            </select>
+            <div class="error-text"></div>
+        </div>
+
+        <button type="submit"
+                class="requires-confirm"
+                data-confirm="Weet je zeker dat je deze account-actie wilt uitvoeren?">
+            Uitvoeren
+        </button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Alle Medewerkers</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Naam</th>
+            <th>Email</th>
+            <th>Login Enabled</th>
+            <th>Device Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for e in employees %}
+        <tr>
+            <td>{{ e.id }}</td>
+            <td>{{ e.name }}</td>
+            <td>{{ e.email }}</td>
+            <td>{{ e.login_enabled }}</td>
+            <td>{{ e.device_status }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

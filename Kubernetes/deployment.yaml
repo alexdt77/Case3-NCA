@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hr-portal
+  namespace: hr-portal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hr-portal
+  template:
+    metadata:
+      labels:
+        app: hr-portal
+    spec:
+      serviceAccountName: hr-portal-sa
+      containers:
+        - name: hr-portal
+          image: 760981412376.dkr.ecr.eu-central-1.amazonaws.com/hr-portal:eks-v10
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+
+          env:
+            - name: AUTH_ENABLED
+              value: "true"
+
+            - name: AWS_REGION
+              value: "eu-central-1"
+
+            - name: AWS_DEFAULT_REGION
+              value: "eu-central-1"
+
+            - name: DYNAMODB_TABLE
+              value: "employees"
+
+            - name: KEYCLOAK_BASE
+              value: "https://neonatal-kingsley-woollily.ngrok-free.dev"
+
+            - name: REDIRECT_URI
+              value: "http://hr-portal-alb-41585817.eu-central-1.elb.amazonaws.com/callback"
+
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20

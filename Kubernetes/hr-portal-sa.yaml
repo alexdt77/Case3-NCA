@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hr-portal-sa
+  namespace: hr-portal
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::760981412376:role/hr-portal-ecr-role

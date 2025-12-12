@@ -1,0 +1,17 @@
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+prompt = no
+
+[req_distinguished_name]
+CN = aws-load-balancer-webhook-service.kube-system.svc
+
+[v3_req]
+keyUsage = keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = aws-load-balancer-webhook-service.kube-system.svc
+DNS.2 = aws-load-balancer-webhook-service.kube-system.svc.cluster.local
+

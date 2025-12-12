@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title if title else "HR Portal" }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide-icons/dist/umd/lucide.min.js"></script>
+</head>
+
+<body class="light page-transition">
+
+<div id="page-overlay"></div>
+
+<div class="app-shell">
+
+    <div class="sidebar" id="sidebar">
+
+        <div class="sidebar-top">
+            <h2 class="logo">Innovatech</h2>
+
+            <button class="collapse-btn" onclick="toggleSidebar()">
+                <i data-lucide="chevron-left"></i>
+            </button>
+        </div>
+
+        <div class="user-box">
+            <div class="user-name">{{ user.username }}</div>
+        </div>
+
+        <nav class="nav">
+
+            <a href="{{ url_for('home') }}"
+               class="nav-link {% if request.endpoint == 'home' %}active{% endif %}">
+                <i data-lucide="home"></i>
+                <span class="nav-label">Dashboard</span>
+            </a>
+
+            {% if 'HR-Employee' in user.roles or 'HR-Manager' in user.roles or 'HR-Admin' in user.roles %}
+            <a href="{{ url_for('onboard') }}"
+               class="nav-link {% if request.endpoint == 'onboard' %}active{% endif %}">
+                <i data-lucide="user-plus"></i>
+                <span class="nav-label">Onboard</span>
+            </a>
+            {% endif %}
+
+            {% if 'HR-Manager' in user.roles or 'HR-Admin' in user.roles %}
+            <a href="{{ url_for('device') }}"
+               class="nav-link {% if request.endpoint == 'device' %}active{% endif %}">
+                <i data-lucide="shield-check"></i>
+                <span class="nav-label">Device</span>
+            </a>
+
+            <a href="{{ url_for('offboard') }}"
+               class="nav-link {% if request.endpoint == 'offboard' %}active{% endif %}">
+                <i data-lucide="user-minus"></i>
+                <span class="nav-label">Offboard</span>
+            </a>
+            {% endif %}
+
+            <a href="{{ url_for('logout') }}"
+               class="nav-link logout requires-confirm"
+               data-confirm="Weet je zeker dat je wilt uitloggen?">
+                <i data-lucide="log-out"></i>
+                <span class="nav-label">Logout</span>
+            </a>
+        </nav>
+
+        <!-- THEME SWITCH -->
+        <div class="theme-toggle">
+            <button onclick="toggleTheme()" class="theme-btn">
+                <i data-lucide="moon"></i>
+            </button>
+        </div>
+
+    </div>
+
+    <div class="content" id="content">
+
+        <div class="breadcrumbs">
+            <span><i data-lucide="chevron-right"></i> {{ request.endpoint|capitalize }}</span>
+        </div>
+
+        {% if request.endpoint != 'home' %}
+            <button onclick="history.back()" class="back-btn">
+                <i data-lucide="arrow-left"></i> Terug
+            </button>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+</div>
+
+<button class="fab" id="scrollTopBtn">
+    <i data-lucide="arrow-up"></i>
+</button>
+
+<div class="modal-backdrop" id="confirm-backdrop">
+    <div class="modal">
+        <h3>Bevestigen</h3>
+        <p id="confirm-message"></p>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-secondary" onclick="closeConfirmModal()">Annuleren</button>
+            <button type="button" class="btn-danger" id="confirm-yes-btn">Ja, uitvoeren</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    lucide.createIcons();
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("page-overlay");
+
+        sidebar.classList.toggle("collapsed");
+
+        if (window.innerWidth <= 900) {
+            sidebar.classList.toggle("open");
+            overlay.classList.toggle("show");
+        }
+
+        localStorage.setItem("sidebar", sidebar.classList.contains("collapsed") ? "1" : "0");
+    }
+
+    (function() {
+        const saved = localStorage.getItem("sidebar");
+        if (saved === "1") document.getElementById("sidebar").classList.add("collapsed");
+    })();
+
+    function toggleTheme() {
+        const isDark = document.body.classList.toggle("dark");
+        const icon = document.querySelector(".theme-btn i");
+        icon.setAttribute("data-lucide", isDark ? "sun" : "moon");
+        lucide.createIcons();
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+    }
+
+    (function() {
+        const saved = localStorage.getItem("theme") || "light";
+        if (saved === "dark") {
+            document.body.classList.add("dark");
+            document.querySelector(".theme-btn i").setAttribute("data-lucide", "sun");
+        }
+        lucide.createIcons();
+    })();
+
+    let pendingAction = null;
+
+    function openConfirmModal(message, cb) {
+        document.getElementById("confirm-message").textContent = message;
+        document.getElementById("confirm-backdrop").classList.add("open");
+        pendingAction = cb;
+    }
+
+    function closeConfirmModal() {
+        document.getElementById("confirm-backdrop").classList.remove("open");
+        pendingAction = null;
+    }
+
+    document.addEventListener("click", function(e) {
+        const target = e.target.closest(".requires-confirm");
+        if (!target) return;
+        e.preventDefault();
+
+        openConfirmModal(target.dataset.confirm, () => {
+            window.location.href = target.href;
+        });
+    });
+
+    const scrollBtn = document.getElementById("scrollTopBtn");
+
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 200) scrollBtn.classList.add("show");
+        else scrollBtn.classList.remove("show");
+    });
+
+    scrollBtn.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
+    window.addEventListener("beforeunload", () => {
+        document.body.classList.add("page-exit");
+    });
+</script>
+
+</body>
+</html>

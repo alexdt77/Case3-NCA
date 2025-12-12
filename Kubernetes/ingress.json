@@ -1,0 +1,47 @@
+{
+    "apiVersion": "networking.k8s.io/v1",
+    "kind": "Ingress",
+    "metadata": {
+        "annotations": {
+            "alb.ingress.kubernetes.io/healthcheck-path": "/",
+            "alb.ingress.kubernetes.io/listen-ports": "[{\"HTTP\":80}]",
+            "alb.ingress.kubernetes.io/scheme": "internet-facing",
+            "alb.ingress.kubernetes.io/target-type": "ip",
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"networking.k8s.io/v1\",\"kind\":\"Ingress\",\"metadata\":{\"annotations\":{\"alb.ingress.kubernetes.io/healthcheck-path\":\"/\",\"alb.ingress.kubernetes.io/listen-ports\":\"[{\\\"HTTP\\\":80}]\",\"alb.ingress.kubernetes.io/scheme\":\"internet-facing\",\"alb.ingress.kubernetes.io/target-type\":\"ip\"},\"creationTimestamp\":\"2025-12-10T16:02:13Z\",\"deletionGracePeriodSeconds\":0,\"deletionTimestamp\":\"2025-12-10T16:11:09Z\",\"generation\":2,\"name\":\"hr-portal-ingress\",\"namespace\":\"hr-portal\",\"resourceVersion\":\"494575\",\"uid\":\"171d112e-8799-40dd-81b7-cee2b8ed1098\"},\"spec\":{\"ingressClassName\":\"alb\",\"rules\":[{\"http\":{\"paths\":[{\"backend\":{\"service\":{\"name\":\"hr-portal\",\"port\":{\"number\":5000}}},\"path\":\"/\",\"pathType\":\"Prefix\"}]}}]},\"status\":{\"loadBalancer\":{}}}\n"
+        },
+        "creationTimestamp": "2025-12-10T16:02:13Z",
+        "deletionGracePeriodSeconds": 0,
+        "deletionTimestamp": "2025-12-10T16:11:09Z",
+        "generation": 2,
+        "name": "hr-portal-ingress",
+        "namespace": "hr-portal",
+        "resourceVersion": "495015",
+        "uid": "171d112e-8799-40dd-81b7-cee2b8ed1098"
+    },
+    "spec": {
+        "ingressClassName": "alb",
+        "rules": [
+            {
+                "http": {
+                    "paths": [
+                        {
+                            "backend": {
+                                "service": {
+                                    "name": "hr-portal",
+                                    "port": {
+                                        "number": 5000
+                                    }
+                                }
+                            },
+                            "path": "/",
+                            "pathType": "Prefix"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "status": {
+        "loadBalancer": {}
+    }
+}

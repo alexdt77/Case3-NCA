@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1 class="page-title">Onboard Employee</h1>
+<p class="page-subtitle">Nieuwe medewerker registreren in de HR-omgeving.</p>
+
+<div class="card">
+    <form method="post" class="validate">
+
+        <div class="form-row">
+            <label>Naam</label>
+            <input name="name" placeholder="Voor- en achternaam" data-required="true">
+            <div class="error-text"></div>
+        </div>
+
+        <div class="form-row">
+            <label>Email</label>
+            <input name="email" type="email" placeholder="naam@bedrijf.nl" data-required="true">
+            <div class="error-text"></div>
+        </div>
+
+        <div class="form-row">
+            <label>Department</label>
+            <input name="department" placeholder="Bijv. HR, IT, Finance" data-required="true">
+            <div class="error-text"></div>
+        </div>
+
+        <div class="form-row">
+            <label>Rol</label>
+            <select name="role" data-required="true">
+                {% if "HR-Employee" in user.roles %}
+                    <option value="HR-Employee">HR-Employee</option>
+                {% elif "HR-Manager" in user.roles %}
+                    <option value="HR-Employee">HR-Employee</option>
+                    <option value="HR-Manager">HR-Manager</option>
+                {% elif "HR-Admin" in user.roles %}
+                    <option value="HR-Employee">HR-Employee</option>
+                    <option value="HR-Manager">HR-Manager</option>
+                    <option value="HR-Admin">HR-Admin</option>
+                {% endif %}
+            </select>
+            <div class="error-text"></div>
+        </div>
+
+        <button type="submit">Onboard</button>
+    </form>
+
+    {% if success %}
+        <div class="alert success mt-16">
+            Onboarding voltooid.
+            <br><br>
+            <small>
+                Employee ID: {{ result.employee_id }}<br>
+                Temporary password: {{ result.temporary_password }}
+            </small>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

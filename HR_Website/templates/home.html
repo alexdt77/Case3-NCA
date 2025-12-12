@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1 class="page-title">HR Portal Dashboard</h1>
+
+<div class="card">
+    <p><strong>Rol:</strong> {{ display_roles }}</p>
+    <p><strong>Device status:</strong> {{ device_status }}</p>
+</div>
+
+{% if device_status != "COMPLIANT" %}
+    <div class="alert danger">
+        Applicaties zijn geblokkeerd omdat je apparaat niet compliant is.
+    </div>
+{% else %}
+    <div class="card">
+        <h2>Beschikbare applicatie</h2>
+        <p class="page-subtitle">
+            Op basis van jouw rol heb je toegang tot één specifieke applicatie.
+        </p>
+
+        <div class="app-links">
+            {% if 'HR-Employee' in user.roles %}
+                <a class="btn" href="{{ url_for('appA') }}">App A – Notepad</a>
+            {% endif %}
+            {% if 'HR-Manager' in user.roles %}
+                <a class="btn" href="{{ url_for('appB') }}">App B – Manager Dashboard</a>
+            {% endif %}
+            {% if 'HR-Admin' in user.roles %}
+                <a class="btn" href="{{ url_for('appC') }}">App C – Admin Panel</a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}

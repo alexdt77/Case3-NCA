@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1>Offboard Employee</h1>
+
+<div class="card">
+
+    {% if error %}
+        <div class="alert danger">{{ error }}</div>
+    {% endif %}
+
+    <form id="offboardForm">
+        <label>Email medewerker</label>
+        <input id="emailInput" name="email" type="email" placeholder="naam@bedrijf.nl" required>
+
+        <button type="button" id="openModalBtn" class="btn danger-btn">
+            Offboard
+        </button>
+    </form>
+</div>
+
+
+<!-- ========= MODAL ========= -->
+<div id="confirmModal" class="modal hidden">
+
+    <div class="modal-content">
+        <h2>Bevestigen</h2>
+        <p>Weet je zeker dat je deze medewerker wilt offboarden?</p>
+
+        <div class="modal-actions">
+            <button class="btn" onclick="closeModal()">Annuleren</button>
+
+            <form method="POST" id="modalSubmitForm" style="display:inline;">
+                <input type="hidden" name="email" id="modalEmailField">
+                <button type="submit" class="btn danger-btn">Ja, uitvoeren</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById("confirmModal");
+    const emailInput = document.getElementById("emailInput");
+    const modalEmailField = document.getElementById("modalEmailField");
+    const openModalBtn = document.getElementById("openModalBtn");
+
+    function openModal() {
+        modal.classList.remove("hidden");
+    }
+
+    function closeModal() {
+        modal.classList.add("hidden");
+    }
+
+    openModalBtn.addEventListener("click", () => {
+        const email = emailInput.value.trim();
+
+        if (!email) {
+            emailInput.classList.add("error");
+            return;
+        }
+
+        emailInput.classList.remove("error");
+        modalEmailField.value = email;
+        openModal();
+    });
+</script>
+
+{% endblock %}
