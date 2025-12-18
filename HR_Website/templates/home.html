@@ -8,9 +8,12 @@
     <p><strong>Device status:</strong> {{ device_status }}</p>
 </div>
 
-{% if device_status != "COMPLIANT" %}
+{% if device_status != "COMPLIANT" and 'HR-Employee' in user.roles %}
     <div class="alert danger">
-        Applicaties zijn geblokkeerd omdat je apparaat niet compliant is.
+        <strong>Toegang geblokkeerd</strong><br>
+        Applicaties zijn geblokkeerd omdat je apparaat niet compliant is.<br>
+        <strong>Huidige status:</strong> {{ device_status }}<br>
+        Neem contact op met HR om je device te laten goedkeuren.
     </div>
 {% else %}
     <div class="card">

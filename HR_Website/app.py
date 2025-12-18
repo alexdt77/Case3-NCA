@@ -39,11 +39,9 @@ from Automation.onboarding import create_employee
 from Automation.offboarding import offboard_employee
 from Automation.deviceenroll import mark_device_compliant
 
-
 def extract_hr_roles(roles):
     hr = [r for r in roles if r in ("HR-Employee", "HR-Manager", "HR-Admin")]
     return ", ".join(hr) if hr else "Geen HR-rol"
-
 
 def get_device_status_for_email(email):
     if not email:
@@ -58,7 +56,6 @@ def get_device_status_for_email(email):
         return "UNKNOWN", None
 
     return items[0].get("device_status", "PENDING_ENROLL"), items[0].get("id")
-
 
 def require_role_and_compliance(*allowed_roles):
     def decorator(f):
@@ -87,18 +84,26 @@ def require_role_and_compliance(*allowed_roles):
                 session["user"] = user
 
             if status != "COMPLIANT":
-                return render_template(
-                    "403_device.html",
-                    user=user,
-                    device_status=status,
-                    display_roles=extract_hr_roles(roles),
-                ), 403
+               print({
+                   "action": "ACCESS_BLOCKED",
+                   "email": email,
+                   "roles": roles,
+                   "device_status": status,
+                   "endpoint": request.endpoint,
+                   "timestamp": datetime.datetime.utcnow().isoformat()
+               })
+            
+               return render_template(
+                   "403_device.html",
+                   user=user,
+                   device_status=status,
+                   display_roles=extract_hr_roles(roles),
+               ), 403
 
             return f(*args, **kwargs)
         wrapper.__name__ = f.__name__
         return wrapper
     return decorator
-
 
 @app.route("/login")
 def login():
@@ -184,7 +189,6 @@ def logout():
         + f"?client_id={CLIENT_ID}&post_logout_redirect_uri={ALB_BASE}/login"
     )
 
-
 @app.route("/")
 def home():
     if "user" not in session:
@@ -194,20 +198,18 @@ def home():
     roles = user["roles"]
     email = user["email"]
 
-    if "HR-Admin" in roles or "HR-Manager" in roles:
-        device_status = "COMPLIANT"
-    else:
-        device_status, _ = get_device_status_for_email(email)
+    live_status, _ = get_device_status_for_email(email)
+    user["device_status"] = live_status
+    session["user"] = user
 
     display_roles = extract_hr_roles(roles)
 
     return render_template(
         "home.html",
         user=user,
-        device_status=device_status,
+        device_status=live_status,
         display_roles=display_roles,
     )
-
 
 @app.route("/onboard", methods=["GET", "POST"])
 @require_role_and_compliance("HR-Employee", "HR-Manager", "HR-Admin")
@@ -266,6 +268,10 @@ def device():
             )
 
         mark_device_compliant(employee_id)
+
+        if session.get("user") and session["user"].get("employee_id") == employee_id:
+            session["user"]["device_status"] = "COMPLIANT"
+
         return redirect(url_for("home"))
 
     return render_template("device.html", user=user)
@@ -302,7 +308,6 @@ def offboard():
 
     return render_template("offboard.html", user=user)
 
-
 @app.route("/appA", methods=["GET", "POST"])
 @require_role_and_compliance("HR-Employee")
 def appA():
@@ -329,7 +334,6 @@ def appA():
 
     return render_template("appA.html", user=user, notes=saved_notes)
 
-
 @app.route("/appB")
 @require_role_and_compliance("HR-Manager")
 def appB():
@@ -337,7 +341,6 @@ def appB():
     employees = scan.get("Items", [])
 
     return render_template("appB.html", user=session["user"], employees=employees)
-
 
 @app.route("/appC", methods=["GET", "POST"])
 @require_role_and_compliance("HR-Admin")
@@ -388,4 +391,4 @@ def health():
     return "OK", 200
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=True)

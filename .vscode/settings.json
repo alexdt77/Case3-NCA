@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./Automation",
+        "./HR_Website"
+    ]
+}
